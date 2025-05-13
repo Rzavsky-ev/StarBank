@@ -2,7 +2,6 @@ package org.skypro.starbank.model.recommendationRuleSet;
 
 import org.skypro.starbank.model.recommendation.Recommendation;
 import org.skypro.starbank.model.recommendation.RecommendationDTO;
-import org.skypro.starbank.model.recommendation.RecommendationDtoFactory;
 import org.skypro.starbank.repository.TransactionRepository;
 import org.springframework.stereotype.Component;
 
@@ -14,13 +13,9 @@ public class RuleSetSimpleCredit implements RecommendationRuleSet {
 
     private final TransactionRepository transactionRepository;
 
-    private final RecommendationDtoFactory recommendationDtoFactory;
-
     private final int summaExpensesDebit = 100_000;
 
-    public RuleSetSimpleCredit(RecommendationDtoFactory recommendationDtoFactory,
-                               TransactionRepository transactionRepository) {
-        this.recommendationDtoFactory = recommendationDtoFactory;
+    public RuleSetSimpleCredit(TransactionRepository transactionRepository) {
         this.transactionRepository = transactionRepository;
     }
 
@@ -32,7 +27,7 @@ public class RuleSetSimpleCredit implements RecommendationRuleSet {
                 (userId, "DEBIT", "WITHDRAW");
         if (!creditCheck && summaOfDepositDebit > summaOfWithdrawDebit &&
                 summaOfWithdrawDebit > summaExpensesDebit) {
-            return Optional.of(recommendationDtoFactory.fromEnum(Recommendation.SIMPLE_CREDIT));
+            return Optional.of(Recommendation.SIMPLE_CREDIT.toDto());
         }
         return Optional.empty();
     }

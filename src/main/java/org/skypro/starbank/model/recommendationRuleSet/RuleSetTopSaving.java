@@ -2,7 +2,6 @@ package org.skypro.starbank.model.recommendationRuleSet;
 
 import org.skypro.starbank.model.recommendation.Recommendation;
 import org.skypro.starbank.model.recommendation.RecommendationDTO;
-import org.skypro.starbank.model.recommendation.RecommendationDtoFactory;
 import org.skypro.starbank.repository.TransactionRepository;
 import org.springframework.stereotype.Component;
 
@@ -14,13 +13,9 @@ public class RuleSetTopSaving implements RecommendationRuleSet {
 
     private final TransactionRepository transactionRepository;
 
-    private final RecommendationDtoFactory recommendationDtoFactory;
-
     private final int amountOfReplenishments = 50_000;
 
-    public RuleSetTopSaving(RecommendationDtoFactory recommendationDtoFactory,
-                            TransactionRepository transactionRepository) {
-        this.recommendationDtoFactory = recommendationDtoFactory;
+    public RuleSetTopSaving(TransactionRepository transactionRepository) {
         this.transactionRepository = transactionRepository;
     }
 
@@ -35,7 +30,7 @@ public class RuleSetTopSaving implements RecommendationRuleSet {
         if (debitCheck &&
                 (summaOfDepositDebit >= amountOfReplenishments || summaOfDepositSaving >= amountOfReplenishments) &&
                 (summaOfDepositDebit > summaOfWithdrawDebit)) {
-            return Optional.of(recommendationDtoFactory.fromEnum(Recommendation.TOP_SAVING));
+            return Optional.of(Recommendation.TOP_SAVING.toDto());
         }
         return Optional.empty();
     }
