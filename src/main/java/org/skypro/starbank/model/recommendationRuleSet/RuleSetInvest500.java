@@ -1,9 +1,10 @@
 package org.skypro.starbank.model.recommendationRuleSet;
 
 
+import org.skypro.starbank.model.recommendation.Recommendation;
 import org.skypro.starbank.model.recommendation.RecommendationDTO;
+import org.skypro.starbank.model.recommendation.RecommendationDtoFactory;
 import org.skypro.starbank.repository.TransactionRepository;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
@@ -14,22 +15,23 @@ public class RuleSetInvest500 implements RecommendationRuleSet {
 
     private final TransactionRepository transactionRepository;
 
-    private final RecommendationDTO recommendation;
+    private final RecommendationDtoFactory recommendationDtoFactory;
 
     private final int amountOfReplenishments = 1000;
 
-    public RuleSetInvest500(@Qualifier("invest500Dto")
-                            RecommendationDTO recommendation, TransactionRepository transactionRepository) {
-        this.recommendation = recommendation;
+    public RuleSetInvest500(TransactionRepository transactionRepository,
+                            RecommendationDtoFactory recommendationDtoFactory) {
+        this.recommendationDtoFactory = recommendationDtoFactory;
         this.transactionRepository = transactionRepository;
     }
 
     public Optional<RecommendationDTO> getRecommendation(UUID userId) {
-        boolean debitCheck = transactionRepository.debitCheck(userId);
-        boolean investCheck = transactionRepository.investCheck(userId);
-        int summaOfDepositDebit = transactionRepository.summaOfDepositDebit(userId);
+        boolean debitCheck = transactionRepository.checkProductAvailability(userId, "DEBIT");
+        boolean investCheck = transactionRepository.checkProductAvailability(userId, "INVEST");
+        int summaOfDepositDebit = transactionRepository.sumTransactions
+                (userId, "DEBIT", "DEPOSIT");
         if (debitCheck && !investCheck && summaOfDepositDebit > amountOfReplenishments) {
-            return Optional.of(recommendation);
+            return Optional.of(recommendationDtoFactory.fromEnum(Recommendation.INVEST_500));
         }
         return Optional.empty();
     }
