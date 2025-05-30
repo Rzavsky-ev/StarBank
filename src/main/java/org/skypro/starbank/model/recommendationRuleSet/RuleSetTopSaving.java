@@ -2,7 +2,8 @@ package org.skypro.starbank.model.recommendationRuleSet;
 
 import org.skypro.starbank.model.recommendation.Recommendation;
 import org.skypro.starbank.model.recommendation.RecommendationDTO;
-import org.skypro.starbank.repository.TransactionRepository;
+import org.skypro.starbank.model.rule.CollectionRules;
+import org.skypro.starbank.model.rule.Rule;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
@@ -11,28 +12,27 @@ import java.util.UUID;
 @Component
 public class RuleSetTopSaving implements RecommendationRuleSet {
 
-    private final TransactionRepository transactionRepository;
+    private final CollectionRules collectionRules;
 
-    private final int amountOfReplenishments = 50_000;
+    private final int minDebitDeposit = 50_000;
 
-    public RuleSetTopSaving(TransactionRepository transactionRepository) {
-        this.transactionRepository = transactionRepository;
+    private final int minSavingDeposit = 50_000;
+
+    public RuleSetTopSaving(CollectionRules collectionRules) {
+        this.collectionRules = collectionRules;
+    }
+
+    private Rule<UUID> meetsTopSavingConditions() {
+        return collectionRules.hasDebitProduct()
+                .and(collectionRules.hasDebitDepositsOverOrHasSavingDepositsOver
+                        (minDebitDeposit, minSavingDeposit))
+                .and(collectionRules.hasDebitDepositsOverWithdraw());
     }
 
     public Optional<RecommendationDTO> getRecommendation(UUID userId) {
-        boolean debitCheck = transactionRepository.checkProductAvailability(userId, "DEBIT");
-        int summaOfDepositDebit = transactionRepository.sumTransactions
-                (userId, "DEBIT", "DEPOSIT");
-        int summaOfWithdrawDebit = transactionRepository.sumTransactions
-                (userId, "DEBIT", "WITHDRAW");
-        int summaOfDepositSaving = transactionRepository.sumTransactions
-                (userId, "SAVING", "DEPOSIT");
-        if (debitCheck &&
-                (summaOfDepositDebit >= amountOfReplenishments || summaOfDepositSaving >= amountOfReplenishments) &&
-                (summaOfDepositDebit > summaOfWithdrawDebit)) {
+        if (meetsTopSavingConditions().check(userId)) {
             return Optional.of(Recommendation.TOP_SAVING.toDto());
         }
         return Optional.empty();
     }
 }
-
