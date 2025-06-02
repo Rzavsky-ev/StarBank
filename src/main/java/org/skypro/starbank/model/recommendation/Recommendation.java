@@ -71,9 +71,4 @@ public enum Recommendation {
         this.name = name;
         this.description = description;
     }
-
-    public RecommendationDTO toDto() {
-        return new RecommendationDTO(id, name, description);
-    }
-
 }

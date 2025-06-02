@@ -22,6 +22,17 @@ public class Rule<T> {
         );
     }
 
+    public Rule<T> negate(String negatedDescription) {
+        return new Rule<>(
+                negatedDescription,
+                data -> !this.condition.test(data)
+        );
+    }
+
+    public static <T> Rule<T> alwaysTrue() {
+        return new Rule<>("Всегда истина", data -> true);
+    }
+
     @Override
     public String toString() {
         return descriptionOfRule;

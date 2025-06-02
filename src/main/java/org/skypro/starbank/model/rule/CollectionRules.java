@@ -1,11 +1,11 @@
 package org.skypro.starbank.model.rule;
 
 import org.skypro.starbank.repository.jdbc.TransactionRepository;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.UUID;
 
-@Component
+@Service
 public class CollectionRules {
 
     private final TransactionRepository transactionRepository;

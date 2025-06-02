@@ -3,7 +3,7 @@ package org.skypro.starbank.cache;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 
-import org.skypro.starbank.dynamicRule.DynamicRule;
+import org.skypro.starbank.model.dynamicRule.dynamicRuleRequest.DynamicRule;
 import org.skypro.starbank.repository.jpa.DynamicRuleRepository;
 import org.springframework.stereotype.Component;
 

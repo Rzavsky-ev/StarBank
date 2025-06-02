@@ -33,5 +33,4 @@ public class DatabaseConfig {
     public DataSource defaultDataSource(DataSourceProperties properties) {
         return properties.initializeDataSourceBuilder().build();
     }
-
 }

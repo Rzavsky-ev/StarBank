@@ -1,8 +1,8 @@
 package org.skypro.starbank.controller;
 
-import org.skypro.starbank.dynamicRule.DynamicRule;
-import org.skypro.starbank.dynamicRule.DynamicRuleRequest;
-import org.skypro.starbank.service.DynamicRuleService;
+import org.skypro.starbank.model.dynamicRule.dynamicRuleRequest.DynamicRule;
+import org.skypro.starbank.model.dynamicRule.dynamicRuleRequest.DynamicRuleRequest;
+import org.skypro.starbank.service.DynamicRuleRequestService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -10,9 +10,9 @@ import java.util.List;
 @RestController
 public class DynamicRuleController {
 
-    private final DynamicRuleService dynamicRuleService;
+    private final DynamicRuleRequestService dynamicRuleService;
 
-    public DynamicRuleController(DynamicRuleService dynamicRuleService) {
+    public DynamicRuleController(DynamicRuleRequestService dynamicRuleService) {
         this.dynamicRuleService = dynamicRuleService;
     }
 

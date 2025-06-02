@@ -1,6 +1,6 @@
 package org.skypro.starbank.service;
 
-import org.skypro.starbank.model.recommendation.RecommendationDTO;
+import org.skypro.starbank.model.recommendation.RuleRecommendationDTO;
 import org.skypro.starbank.model.recommendationRuleSet.RecommendationRuleSet;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +19,7 @@ public class StarBankServiceImpl implements StarBankService{
         this.recommendationRuleSets = new ArrayList<>(recommendationRuleSets);
     }
 
-    public List<RecommendationDTO> defineRecommendations(UUID userId) {
+    public List<RuleRecommendationDTO> defineRecommendations(UUID userId) {
         return recommendationRuleSets.stream()
                 .map(rule -> rule.getRecommendation(userId))
                 .filter(Optional::isPresent)

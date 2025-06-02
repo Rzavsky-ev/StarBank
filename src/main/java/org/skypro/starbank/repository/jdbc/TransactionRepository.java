@@ -48,4 +48,22 @@ public class TransactionRepository {
             throw new DatabaseOperationException("Не удалось суммировать транзакции", e);
         }
     }
+
+    public int countTransactionsByProduct(UUID userId, String productType) {
+        try {
+            Integer res = jdbcTemplate.queryForObject(
+                    "SELECT COALESCE(COUNT(*), 0) FROM TRANSACTIONS " +
+                            "INNER JOIN PRODUCTS ON TRANSACTIONS.PRODUCT_ID = PRODUCTS.ID " +
+                            "WHERE TRANSACTIONS.USER_ID = ? " +
+                            "AND PRODUCTS.TYPE = ?",
+                    Integer.class,
+                    userId, productType
+
+            );
+            return res != null ? res : 0;
+        } catch (DataAccessException e) {
+            logger.error("Ошибка базы данных при суммировании транзакций для пользователя: {}", userId, e);
+            throw new DatabaseOperationException("Не удалось суммировать транзакции", e);
+        }
+    }
 }
