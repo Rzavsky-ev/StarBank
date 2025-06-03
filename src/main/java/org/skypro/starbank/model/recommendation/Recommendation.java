@@ -1,7 +1,10 @@
 package org.skypro.starbank.model.recommendation;
 
+import lombok.Getter;
+
 import java.util.UUID;
 
+@Getter
 public enum Recommendation {
 
     SIMPLE_CREDIT(
@@ -68,21 +71,4 @@ public enum Recommendation {
         this.name = name;
         this.description = description;
     }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public UUID getId() {
-        return id;
-    }
-
-    public RecommendationDTO toDto() {
-        return new RecommendationDTO(id, name, description);
-    }
-
 }

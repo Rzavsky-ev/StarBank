@@ -1,8 +1,10 @@
 package org.skypro.starbank.model.recommendationRuleSet;
 
+import org.skypro.starbank.model.mapper.RuleRecommendationMapper;
 import org.skypro.starbank.model.recommendation.Recommendation;
-import org.skypro.starbank.model.recommendation.RecommendationDTO;
-import org.skypro.starbank.repository.TransactionRepository;
+import org.skypro.starbank.model.recommendation.RuleRecommendationDTO;
+import org.skypro.starbank.model.rule.CollectionRules;
+import org.skypro.starbank.model.rule.Rule;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
@@ -11,28 +13,32 @@ import java.util.UUID;
 @Component
 public class RuleSetTopSaving implements RecommendationRuleSet {
 
-    private final TransactionRepository transactionRepository;
+    private final CollectionRules collectionRules;
 
-    private final int amountOfReplenishments = 50_000;
+    private final RuleRecommendationMapper ruleRecommendationMapper;
 
-    public RuleSetTopSaving(TransactionRepository transactionRepository) {
-        this.transactionRepository = transactionRepository;
+    private final int minDebitDeposit = 50_000;
+
+    private final int minSavingDeposit = 50_000;
+
+    public RuleSetTopSaving(CollectionRules collectionRules,
+                            RuleRecommendationMapper ruleRecommendationMapper) {
+        this.collectionRules = collectionRules;
+        this.ruleRecommendationMapper = ruleRecommendationMapper;
     }
 
-    public Optional<RecommendationDTO> getRecommendation(UUID userId) {
-        boolean debitCheck = transactionRepository.checkProductAvailability(userId, "DEBIT");
-        int summaOfDepositDebit = transactionRepository.sumTransactions
-                (userId, "DEBIT", "DEPOSIT");
-        int summaOfWithdrawDebit = transactionRepository.sumTransactions
-                (userId, "DEBIT", "WITHDRAW");
-        int summaOfDepositSaving = transactionRepository.sumTransactions
-                (userId, "SAVING", "DEPOSIT");
-        if (debitCheck &&
-                (summaOfDepositDebit >= amountOfReplenishments || summaOfDepositSaving >= amountOfReplenishments) &&
-                (summaOfDepositDebit > summaOfWithdrawDebit)) {
-            return Optional.of(Recommendation.TOP_SAVING.toDto());
+    private Rule<UUID> meetsTopSavingConditions() {
+        return collectionRules.hasDebitProduct()
+                .and(collectionRules.hasDebitDepositsOverOrHasSavingDepositsOver
+                        (minDebitDeposit, minSavingDeposit))
+                .and(collectionRules.hasDebitDepositsOverWithdraw());
+    }
+
+    @Override
+    public Optional<RuleRecommendationDTO> getRecommendation(UUID userId) {
+        if (meetsTopSavingConditions().check(userId)) {
+            return Optional.of(ruleRecommendationMapper.toDTO(Recommendation.TOP_SAVING));
         }
         return Optional.empty();
     }
 }
-
