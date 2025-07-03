@@ -12,4 +12,6 @@ public interface DynamicRuleRequestService {
     void removeDynamicRule(Long id);
 
     List<DynamicRule> showAllDynamicRules();
+
+    void clearCaches();
 }
