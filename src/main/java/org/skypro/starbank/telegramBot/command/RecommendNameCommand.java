@@ -15,7 +15,6 @@ public class RecommendNameCommand implements Command {
         this.botService = botService;
     }
 
-
     @Override
     public SendMessage execute(Long chatId) {
         try {
