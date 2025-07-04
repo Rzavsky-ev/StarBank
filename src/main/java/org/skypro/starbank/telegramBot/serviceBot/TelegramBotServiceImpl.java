@@ -7,6 +7,7 @@ import org.skypro.starbank.service.DynamicRuleRecommendationService;
 import org.skypro.starbank.service.StarBankService;
 import org.skypro.starbank.telegramBot.modelBot.Clients;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,16 +28,19 @@ public class TelegramBotServiceImpl implements TelegramBotService {
         this.clientRepository = clientRepository;
     }
 
+    @Transactional
     @Override
     public String getFirstName(Long chatId) throws ClientNotFoundException {
         return getClient(chatId).getFirstName();
     }
 
+    @Transactional
     @Override
     public String getLastName(Long chatId) throws ClientNotFoundException {
         return getClient(chatId).getLastName();
     }
 
+    @Transactional
     @Override
     public List<RecommendationDTO> getBotRecommendation(Long chatId) {
         UUID id = getClient(chatId).getId();
