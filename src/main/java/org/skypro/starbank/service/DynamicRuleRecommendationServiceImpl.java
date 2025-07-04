@@ -16,13 +16,16 @@ public class DynamicRuleRecommendationServiceImpl implements DynamicRuleRecommen
     private final DynamicRuleRepository dynamicRuleRepository;
     private final DynamicRuleRecommendationSet dynamicRuleRecommendationSet;
     private final DynamicRuleMapper dynamicRuleMapper;
+    private final CounterDynamicRuleServiceImpl counterDynamicRuleService;
 
     public DynamicRuleRecommendationServiceImpl(DynamicRuleRepository dynamicRuleRepository,
                                                 DynamicRuleRecommendationSet dynamicRuleRecommendationSet,
-                                                DynamicRuleMapper dynamicRuleMapper) {
+                                                DynamicRuleMapper dynamicRuleMapper,
+                                                CounterDynamicRuleServiceImpl counterDynamicRuleService) {
         this.dynamicRuleRepository = dynamicRuleRepository;
         this.dynamicRuleRecommendationSet = dynamicRuleRecommendationSet;
         this.dynamicRuleMapper = dynamicRuleMapper;
+        this.counterDynamicRuleService = counterDynamicRuleService;
     }
 
     private List<DynamicRuleRecommendationDTO> getAllRules() {
@@ -31,17 +34,22 @@ public class DynamicRuleRecommendationServiceImpl implements DynamicRuleRecommen
                 .collect(Collectors.toList());
     }
 
+    private void incrementCounter(List<DynamicRuleRecommendationDTO> rules) {
+        rules.forEach(rule -> {
+            counterDynamicRuleService.incrementCounter(rule.getId());
+        });
+    }
+
     @Override
     public List<DynamicRuleRecommendationDTO> checkUserAgainstAllDynamicRules(UUID userId) {
         List<DynamicRuleRecommendationDTO> allRules = getAllRules();
-
-        return allRules.stream()
+        List<DynamicRuleRecommendationDTO> suitableRules = allRules.stream()
                 .filter(rule -> {
                     Rule<UUID> combinedRule = dynamicRuleRecommendationSet.createCombinedRule(rule);
                     return combinedRule.check(userId);
                 })
-                .collect(Collectors.toList());
+                .toList();
+        incrementCounter(suitableRules);
+        return suitableRules;
     }
-
-
 }

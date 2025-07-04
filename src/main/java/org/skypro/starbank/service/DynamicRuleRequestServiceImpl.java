@@ -17,8 +17,12 @@ public class DynamicRuleRequestServiceImpl implements DynamicRuleRequestService 
 
     private final DynamicRuleCache dynamicRuleCache;
 
-    public DynamicRuleRequestServiceImpl(DynamicRuleCache dynamicRuleCache) {
+    private final CounterDynamicRuleServiceImpl counterDynamicRuleService;
+
+    public DynamicRuleRequestServiceImpl(DynamicRuleCache dynamicRuleCache,
+                                         CounterDynamicRuleServiceImpl counterDynamicRuleService) {
         this.dynamicRuleCache = dynamicRuleCache;
+        this.counterDynamicRuleService = counterDynamicRuleService;
     }
 
     @Transactional
@@ -40,6 +44,7 @@ public class DynamicRuleRequestServiceImpl implements DynamicRuleRequestService 
                 }
         ).toList();
         dynamicRule.setRuleConditions(requestTypes);
+        counterDynamicRuleService.createCounterDynamicRule(dynamicRule);
         return dynamicRuleCache.save(dynamicRule);
     }
 
@@ -58,6 +63,11 @@ public class DynamicRuleRequestServiceImpl implements DynamicRuleRequestService 
             throw new EmptyDatabaseException("База данных пуста");
         }
         return rules;
+    }
+
+    @Transactional
+    public void clearCaches() {
+        dynamicRuleCache.invalidateAllCaches();
     }
 }
 

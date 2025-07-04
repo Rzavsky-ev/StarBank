@@ -1,16 +1,13 @@
 package org.skypro.starbank.model.dynamicRule.dynamicRuleRequest;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 import org.springframework.data.relational.core.mapping.Table;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
 
-@Getter
-@Setter
+@Data
 @Entity
 @Table(name = "dynamic_rules")
 public class DynamicRule {
@@ -34,27 +31,5 @@ public class DynamicRule {
     private List<RequestType> ruleConditions;
 
     public DynamicRule() {
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, productName, productId);
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof DynamicRule other)) return false;
-        return Objects.equals(id, other.id) &&
-                Objects.equals(productName, other.productName) && Objects.equals(productId, other.productId);
-    }
-
-    @Override
-    public String toString() {
-        return "DynamicRule{" +
-                "id=" + id +
-                ", productName=" + productName + '\'' +
-                ", productId=" + productId +
-                '}';
     }
 }

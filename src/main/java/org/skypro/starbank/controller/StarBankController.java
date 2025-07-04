@@ -30,8 +30,6 @@ public class StarBankController {
         recommendation.addAll(dynamicRuleRecommendationService.checkUserAgainstAllDynamicRules(id));
         return recommendation;
     }
-
-
 }
 
 
