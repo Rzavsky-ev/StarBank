@@ -10,15 +10,34 @@ import org.springframework.stereotype.Repository;
 
 import java.util.UUID;
 
+/**
+ * Репозиторий для работы с транзакциями в базе данных.
+ * Обеспечивает доступ к данным о транзакциях пользователей и связанным продуктам.
+ */
 @Repository
 public class TransactionRepository {
     private final JdbcTemplate jdbcTemplate;
     private final Logger logger = LoggerFactory.getLogger(TransactionRepository.class);
 
+    /**
+     * Конструктор репозитория.
+     *
+     * @param jdbcTemplate JdbcTemplate для работы с рекомендательной БД,
+     *                     должен быть квалифицирован как "recommendationsJdbcTemplate"
+     */
     public TransactionRepository(@Qualifier("recommendationsJdbcTemplate") JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 
+    /**
+     * Проверяет наличие продукта определенного типа у пользователя.
+     *
+     * @param userId      идентификатор пользователя
+     * @param productType тип продукта для проверки
+     * @return true если у пользователя есть хотя бы одна транзакция с указанным типом продукта,
+     * false в противном случае
+     * @throws DatabaseOperationException если произошла ошибка при работе с базой данных
+     */
     public Boolean checkProductAvailability(UUID userId, String productType) {
         try {
             return jdbcTemplate.queryForObject(
@@ -34,6 +53,15 @@ public class TransactionRepository {
         }
     }
 
+    /**
+     * Суммирует транзакции пользователя по заданным критериям.
+     *
+     * @param userId          идентификатор пользователя
+     * @param productType     тип продукта
+     * @param transactionType тип транзакции
+     * @return сумма всех транзакций, удовлетворяющих условиям (0 если транзакций нет)
+     * @throws DatabaseOperationException если произошла ошибка при работе с базой данных
+     */
     public Integer sumTransactions(UUID userId, String productType, String transactionType) {
         try {
             return jdbcTemplate.queryForObject(
@@ -49,6 +77,14 @@ public class TransactionRepository {
         }
     }
 
+    /**
+     * Подсчитывает количество транзакций пользователя для определенного типа продукта.
+     *
+     * @param userId      идентификатор пользователя
+     * @param productType тип продукта
+     * @return количество транзакций (0 если транзакций нет)
+     * @throws DatabaseOperationException если произошла ошибка при работе с базой данных
+     */
     public int countTransactionsByProduct(UUID userId, String productType) {
         try {
             Integer res = jdbcTemplate.queryForObject(

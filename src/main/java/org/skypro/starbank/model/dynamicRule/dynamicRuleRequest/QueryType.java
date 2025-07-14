@@ -3,6 +3,12 @@ package org.skypro.starbank.model.dynamicRule.dynamicRuleRequest;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.Getter;
 
+/**
+ * Перечисление, представляющее типы запросов/условий для динамических правил.
+ * Используется для определения условий применения бизнес-правил.
+ *
+ * <p>Поддерживает кастомную десериализацию через {@link QueryTypeDeserializer}.
+ */
 @Getter
 @JsonDeserialize(using = QueryTypeDeserializer.class)
 public enum QueryType {
@@ -22,12 +28,26 @@ public enum QueryType {
             Этот запрос сравнивает сумму всех транзакций типа DEPOSIT с суммой всех транзакций типа WITHDRAW
             по продукту X. Где X — первый аргумент запроса, а операция сравнения — второй аргумент запроса.""");
 
+    /**
+     * Детальное описание условия запроса и формата его использования.
+     */
     private String description;
 
+    /**
+     * Конструктор для элементов перечисления.
+     *
+     * @param description описание условия запроса
+     */
     QueryType(String description) {
         this.description = description;
     }
 
+    /**
+     * Возвращает строковое представление элемента перечисления,
+     * включающее его имя и описание.
+     *
+     * @return форматированная строка с именем и описанием
+     */
     @Override
     public String toString() {
         return name() + " - " + description;

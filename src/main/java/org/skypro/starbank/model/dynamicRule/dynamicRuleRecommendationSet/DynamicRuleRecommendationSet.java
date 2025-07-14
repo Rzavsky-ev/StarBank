@@ -11,14 +11,30 @@ import java.util.List;
 import java.util.UUID;
 import java.util.function.Predicate;
 
+/**
+ * Фабрика для создания комбинированных правил рекомендаций на основе DTO.
+ * Преобразует условия динамических правил в исполняемые бизнес-правила.
+ */
 @Component
 public class DynamicRuleRecommendationSet {
     private final TransactionRepository transactionRepository;
 
+    /**
+     * Конструктор фабрики правил.
+     *
+     * @param transactionRepository репозиторий для проверки транзакций пользователей
+     */
     public DynamicRuleRecommendationSet(TransactionRepository transactionRepository) {
         this.transactionRepository = transactionRepository;
     }
 
+    /**
+     * Создает комбинированное правило из условий DTO.
+     *
+     * @param dynamicRule DTO с условиями правила
+     * @return комбинированное правило (AND всех условий)
+     * или всегда истинное правило, если условий нет
+     */
     public Rule<UUID> createCombinedRule(DynamicRuleRecommendationDTO dynamicRule) {
         return dynamicRule.getRuleConditions().stream()
                 .map(this::createRuleFromRequestType)
@@ -26,7 +42,12 @@ public class DynamicRuleRecommendationSet {
                 .orElse(Rule.alwaysTrue());
     }
 
-
+    /**
+     * Создает правило из одного условия.
+     *
+     * @param requestType DTO условия правила
+     * @return созданное правило (возможно с отрицанием)
+     */
     private Rule<UUID> createRuleFromRequestType(RequestTypeDTO requestType) {
         Predicate<UUID> predicate = createPredicateFromRequestType(requestType);
         String description = generateDescription(requestType);
@@ -38,6 +59,12 @@ public class DynamicRuleRecommendationSet {
                 : rule;
     }
 
+    /**
+     * Создает предикат для проверки условия правила.
+     *
+     * @param requestType DTO условия правила
+     * @return предикат, проверяющий условие для UUID пользователя
+     */
     private Predicate<UUID> createPredicateFromRequestType(RequestTypeDTO requestType) {
         List<String> arguments = requestType.getArguments();
         QueryType queryType = requestType.getQuery();
@@ -85,6 +112,12 @@ public class DynamicRuleRecommendationSet {
         };
     }
 
+    /**
+     * Генерирует описание условия правила.
+     *
+     * @param requestType DTO условия правила
+     * @return читаемое описание условия
+     */
     private String generateDescription(RequestTypeDTO requestType) {
         List<String> arguments = requestType.getArguments();
         QueryType queryType = requestType.getQuery();
@@ -101,5 +134,4 @@ public class DynamicRuleRecommendationSet {
                     arguments.get(0), arguments.get(1));
         };
     }
-
 }

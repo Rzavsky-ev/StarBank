@@ -1,0 +1,222 @@
+openapi: 3.0.1
+info:
+  title: Bank Recommendation Service API
+  version: 1.0.0
+  description: |
+    API для управления рекомендациями банковских продуктов
+    - Работа со статическими и динамическими правилами
+    - Получение персональных рекомендаций
+    - Управление кешем
+
+servers:
+  - url: https://api.bank.example.com/v1
+    description: Production server
+
+paths:
+  /recommendation/{user_id}:
+    get:
+      tags:
+        - Recommendations
+      summary: Получить рекомендации для пользователя
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          example: "d4a4d619-9a0c-4fc5-b0cb-76c49409546b"
+      responses:
+        '200':
+          description: Успешный ответ
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecommendationResponse'
+        '404':
+          description: Пользователь не найден
+
+  /rule:
+    post:
+      tags:
+        - Rules
+      summary: Создать новое динамическое правило
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateRuleRequest'
+      responses:
+        '201':
+          description: Правило создано
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RuleResponse'
+    get:
+      tags:
+        - Rules
+      summary: Получить все динамические правила
+      responses:
+        '200':
+          description: Список правил
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/RuleResponse'
+
+  /rule/{rule_id}:
+    delete:
+      tags:
+        - Rules
+      summary: Удалить динамическое правило
+      parameters:
+        - name: rule_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Правило удалено
+
+  /rule/stats:
+    get:
+      tags:
+        - Statistics
+      summary: Получить статистику срабатываний правил
+      responses:
+        '200':
+          description: Статистика
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatsResponse'
+
+  /management/clear-caches:
+    post:
+      tags:
+        - Management
+      summary: Сбросить кеши рекомендаций
+      responses:
+        '200':
+          description: Кеш очищен
+
+  /management/info:
+    get:
+      tags:
+        - Management
+      summary: Получить информацию о сервисе
+      responses:
+        '200':
+          description: Информация
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceInfo'
+
+components:
+  schemas:
+    RecommendationResponse:
+      type: object
+      properties:
+        user_id:
+          type: string
+          format: uuid
+        recommendations:
+          type: array
+          items:
+            $ref: '#/components/schemas/RecommendationItem'
+      example:
+        user_id: "d4a4d619-9a0c-4fc5-b0cb-76c49409546b"
+        recommendations:
+          - name: "Top Saving"
+            id: "59efc529-2fff-41af-baff-90ccd7402925"
+            text: "Описание продукта..."
+
+    RecommendationItem:
+      type: object
+      properties:
+        name:
+          type: string
+        id:
+          type: string
+          format: uuid
+        text:
+          type: string
+
+    CreateRuleRequest:
+      type: object
+      required:
+        - product_name
+        - product_id
+        - rule
+      properties:
+        product_name:
+          type: string
+        product_id:
+          type: string
+          format: uuid
+        product_text:
+          type: string
+        rule:
+          type: array
+          items:
+            $ref: '#/components/schemas/RuleCondition'
+
+    RuleCondition:
+      type: object
+      properties:
+        query:
+          type: string
+          enum: [USER_OF, ACTIVE_USER_OF, TRANSACTION_SUM_COMPARE, TRANSACTION_SUM_COMPARE_DEPOSIT_WITHDRAW]
+        arguments:
+          type: array
+          items:
+            type: string
+        negate:
+          type: boolean
+
+    RuleResponse:
+      allOf:
+        - $ref: '#/components/schemas/CreateRuleRequest'
+        - type: object
+          properties:
+            id:
+              type: string
+              format: uuid
+
+    StatsResponse:
+      type: object
+      properties:
+        stats:
+          type: array
+          items:
+            $ref: '#/components/schemas/StatsItem'
+
+    StatsItem:
+      type: object
+      properties:
+        rule_id:
+          type: string
+          format: uuid
+        count:
+          type: integer
+
+    ServiceInfo:
+      type: object
+      properties:
+        name:
+          type: string
+        version:
+          type: string
+      example:
+        name: "Bank Recommendation Service"
+        version: "1.0.0"
