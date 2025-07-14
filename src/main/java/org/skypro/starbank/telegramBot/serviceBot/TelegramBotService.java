@@ -16,7 +16,6 @@ public interface TelegramBotService {
      *
      * @param chatId уникальный идентификатор чата с клиентом
      * @return имя клиента
-     * @throws ClientNotFoundException если клиент с указанным chatId не найден
      */
     String getFirstName(Long chatId) throws ClientNotFoundException;
 
@@ -25,7 +24,6 @@ public interface TelegramBotService {
      *
      * @param chatId уникальный идентификатор чата с клиентом
      * @return фамилия клиента
-     * @throws ClientNotFoundException если клиент с указанным chatId не найден
      */
     String getLastName(Long chatId) throws ClientNotFoundException;
 

@@ -17,8 +17,6 @@ public interface StarBankService {
      *
      * @param userId уникальный идентификатор пользователя
      * @return список рекомендаций в формате DTO (может быть пустым, если нет подходящих предложений)
-     * @throws org.skypro.starbank.exception.ClientNotFoundException    если пользователь с указанным ID не найден
-     * @throws org.skypro.starbank.exception.DatabaseOperationException при ошибках доступа к данным
      * @implNote Реализации этого метода должны:
      * - Анализировать финансовый профиль пользователя
      * - Проверять соответствие критериям рекомендаций

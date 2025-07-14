@@ -16,8 +16,6 @@ public interface DynamicRuleRequestService {
      *
      * @param request DTO с данными для создания правила
      * @return созданное динамическое правило
-     * @throws org.skypro.starbank.exception.InvalidRuleException       если данные запроса некорректны
-     * @throws org.skypro.starbank.exception.DatabaseOperationException при ошибках сохранения
      */
     DynamicRule createDynamicRule(DynamicRuleRequest request);
 
@@ -25,8 +23,6 @@ public interface DynamicRuleRequestService {
      * Удаляет динамическое правило по идентификатору.
      *
      * @param id идентификатор правила для удаления
-     * @throws org.skypro.starbank.exception.RuleNotFoundException      если правило не найдено
-     * @throws org.skypro.starbank.exception.DatabaseOperationException при ошибках удаления
      */
     void removeDynamicRule(Long id);
 

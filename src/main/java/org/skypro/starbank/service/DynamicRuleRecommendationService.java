@@ -19,8 +19,6 @@ public interface DynamicRuleRecommendationService {
      * @param userId идентификатор пользователя для проверки
      * @return список DTO с рекомендациями, которые соответствуют пользователю.
      * Если ни одно правило не применимо, возвращается пустой список.
-     * @throws org.skypro.starbank.exception.DatabaseOperationException при ошибках доступа к данным правил
-     * @throws org.skypro.starbank.exception.ClientNotFoundException    если пользователь с указанным ID не найден
      */
     List<DynamicRuleRecommendationDTO> checkUserAgainstAllDynamicRules(UUID userId);
 

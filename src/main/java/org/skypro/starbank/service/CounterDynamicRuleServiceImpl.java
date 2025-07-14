@@ -34,7 +34,6 @@ public class CounterDynamicRuleServiceImpl implements CounterDynamicRuleService 
      * Выполняется в транзакции.
      *
      * @param rule динамическое правило, для которого создается счетчик
-     * @throws javax.persistence.PersistenceException при ошибках сохранения
      */
     @Override
     @Transactional
