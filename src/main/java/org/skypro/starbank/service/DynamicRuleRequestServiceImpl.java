@@ -21,7 +21,7 @@ public class DynamicRuleRequestServiceImpl implements DynamicRuleRequestService 
 
     private final DynamicRuleCache dynamicRuleCache;
 
-    private final CounterDynamicRuleServiceImpl counterDynamicRuleService;
+    private final CounterDynamicRuleService counterDynamicRuleService;
 
     /**
      * Конструктор сервиса.

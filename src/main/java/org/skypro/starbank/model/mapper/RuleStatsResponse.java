@@ -37,7 +37,7 @@ public class RuleStatsResponse {
          * <p>
          * Формат и содержание идентификатора зависят от бизнес-логики приложения.
          */
-        private String rule_id;
+        private String ruleId;
         /**
          * Количество срабатываний/применений данного правила.
          * <p>
