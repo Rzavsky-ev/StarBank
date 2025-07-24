@@ -70,6 +70,7 @@ public class DynamicRuleCache {
                 Collections.unmodifiableList(dynamicRuleRepository.findAll()));
     }
 
+
     /**
      * Удаляет правило по ID из репозитория и инвалидирует соответствующие записи в кэшах.
      *
