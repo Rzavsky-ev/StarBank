@@ -4,6 +4,12 @@ import lombok.Getter;
 
 import java.util.UUID;
 
+/**
+ * Перечисление, представляющее возможные рекомендации продуктов для клиентов.
+ * <p>
+ * Каждая рекомендация содержит уникальный идентификатор, название продукта
+ * и подробное маркетинговое описание преимуществ продукта.
+ */
 @Getter
 public enum Recommendation {
 
@@ -66,6 +72,13 @@ public enum Recommendation {
     private final String name;
     private final String description;
 
+    /**
+     * Конструктор для элементов перечисления.
+     *
+     * @param id          строковое представление UUID идентификатора
+     * @param name        название продукта
+     * @param description описание продукта
+     */
     Recommendation(String id, String name, String description) {
         this.id = UUID.fromString(id);
         this.name = name;

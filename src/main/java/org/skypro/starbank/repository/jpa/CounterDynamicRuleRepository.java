@@ -7,10 +7,23 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+/**
+ * JPA репозиторий для работы со счетчиками использования динамических правил.
+ * Предоставляет методы для управления и обновления счетчиков правил.
+ */
 @Repository
 public interface CounterDynamicRuleRepository extends
         JpaRepository<CounterDynamicRule, Integer> {
 
+    /**
+     * Увеличивает счетчик использования динамического правила на 1.
+     * <p>
+     * Выполняет атомарное обновление счетчика для указанного правила.
+     *
+     * @param ruleId идентификатор динамического правила, для которого нужно увеличить счетчик
+     * @apiNote Использует JPQL запрос с аннотацией {@link Modifying} для выполнения UPDATE
+     * @implNote Запрос напрямую обновляет значение в базе данных без загрузки сущности в память
+     */
     @Modifying
     @Query("UPDATE CounterDynamicRule c SET c.counter = " +
             "c.counter + 1 WHERE c.dynamicRule.id = :ruleId")

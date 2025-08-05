@@ -13,6 +13,10 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+/**
+ * Сервисный класс для обработки и выполнения команд Telegram-бота.
+ * Обеспечивает выполнение команд, полученных от пользователя, и отправку ответов.
+ */
 @Service
 public class ExecuteServiceImpl implements ExecuteService {
 
@@ -20,6 +24,12 @@ public class ExecuteServiceImpl implements ExecuteService {
 
     private final Map<NamesCommand, Command> commands;
 
+    /**
+     * Конструктор класса, инициализирующий TelegramBot и доступные команды.
+     *
+     * @param telegramBot экземпляр TelegramBot для взаимодействия с Telegram API
+     * @param commandList список доступных команд, которые будут зарегистрированы в сервисе
+     */
     public ExecuteServiceImpl(TelegramBot telegramBot, List<Command> commandList) {
         this.telegramBot = telegramBot;
         this.commands = commandList.stream()
@@ -30,6 +40,13 @@ public class ExecuteServiceImpl implements ExecuteService {
                 ));
     }
 
+    /**
+     * Основной метод выполнения команд.
+     * Обрабатывает входящее обновление от Telegram, извлекает команду и выполняет соответствующее действие.
+     * Если команда неизвестна, отправляет сообщение об ошибке.
+     *
+     * @param update объект Update, содержащий информацию о входящем сообщении/команде
+     */
     @Override
     public void execute(Update update) {
         if (update.message() != null && update.message().text() != null) {
@@ -45,6 +62,4 @@ public class ExecuteServiceImpl implements ExecuteService {
             }
         }
     }
-
-
 }

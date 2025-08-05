@@ -12,19 +12,43 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+/**
+ * Реализация сервиса для работы с динамическими правилами системы.
+ * Обеспечивает кэширование и транзакционное управление операциями с правилами.
+ */
 @Service
 public class DynamicRuleRequestServiceImpl implements DynamicRuleRequestService {
 
     private final DynamicRuleCache dynamicRuleCache;
 
-    private final CounterDynamicRuleServiceImpl counterDynamicRuleService;
+    private final CounterDynamicRuleService counterDynamicRuleService;
 
+    /**
+     * Конструктор сервиса.
+     *
+     * @param dynamicRuleCache          кэш динамических правил
+     * @param counterDynamicRuleService сервис для учета статистики использования правил
+     */
     public DynamicRuleRequestServiceImpl(DynamicRuleCache dynamicRuleCache,
                                          CounterDynamicRuleServiceImpl counterDynamicRuleService) {
         this.dynamicRuleCache = dynamicRuleCache;
         this.counterDynamicRuleService = counterDynamicRuleService;
     }
 
+    /**
+     * Создает новое динамическое правило на основе запроса.
+     *
+     * @param request DTO с данными для создания правила
+     * @return сохраненное динамическое правило
+     * @throws EmptyRequestException если запрос пустой
+     * @implNote Процесс создания:
+     * 1. Валидация входящего запроса
+     * 2. Создание объекта правила
+     * 3. Преобразование условий правила
+     * 4. Создание счетчика использования
+     * 5. Сохранение в кэш и БД
+     */
+    @Override
     @Transactional
     public DynamicRule createDynamicRule(DynamicRuleRequest request) {
         if (request == null) {
@@ -48,6 +72,16 @@ public class DynamicRuleRequestServiceImpl implements DynamicRuleRequestService 
         return dynamicRuleCache.save(dynamicRule);
     }
 
+    /**
+     * Удаляет динамическое правило по идентификатору.
+     *
+     * @param id идентификатор правила для удаления
+     * @throws DynamicRuleNotFoundInDatabaseException если правило не найдено
+     * @implNote Процесс удаления:
+     * 1. Проверка существования правила
+     * 2. Удаление из кэша и БД
+     */
+    @Override
     @Transactional
     public void removeDynamicRule(Long id) {
         DynamicRule rule = dynamicRuleCache.findById(id)
@@ -56,6 +90,13 @@ public class DynamicRuleRequestServiceImpl implements DynamicRuleRequestService 
         dynamicRuleCache.deleteById(id);
     }
 
+    /**
+     * Возвращает список всех динамических правил.
+     *
+     * @return список всех правил
+     * @throws EmptyDatabaseException если в БД нет правил
+     */
+    @Override
     @Transactional
     public List<DynamicRule> showAllDynamicRules() {
         List<DynamicRule> rules = dynamicRuleCache.findAll();
@@ -65,6 +106,11 @@ public class DynamicRuleRequestServiceImpl implements DynamicRuleRequestService 
         return rules;
     }
 
+    /**
+     * Очищает кэши динамических правил.
+     * Используется для принудительного обновления данных из БД.
+     */
+    @Override
     @Transactional
     public void clearCaches() {
         dynamicRuleCache.invalidateAllCaches();

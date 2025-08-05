@@ -5,13 +5,38 @@ import org.skypro.starbank.model.dynamicRule.dynamicRuleRequest.DynamicRuleReque
 
 import java.util.List;
 
+/**
+ * Сервис для работы с динамическими правилами системы.
+ * Обеспечивает создание, удаление и получение правил, а также управление их кэшированием.
+ */
 public interface DynamicRuleRequestService {
 
+    /**
+     * Создает новое динамическое правило на основе запроса.
+     *
+     * @param request DTO с данными для создания правила
+     * @return созданное динамическое правило
+     */
     DynamicRule createDynamicRule(DynamicRuleRequest request);
 
+    /**
+     * Удаляет динамическое правило по идентификатору.
+     *
+     * @param id идентификатор правила для удаления
+     */
     void removeDynamicRule(Long id);
 
+    /**
+     * Возвращает список всех динамических правил системы.
+     *
+     * @return список всех правил (может быть пустым)
+     * @throws org.skypro.starbank.exception.DatabaseOperationException при ошибках чтения
+     */
     List<DynamicRule> showAllDynamicRules();
 
+    /**
+     * Очищает кэши динамических правил.
+     * Используется для принудительного обновления данных из БД.
+     */
     void clearCaches();
 }
